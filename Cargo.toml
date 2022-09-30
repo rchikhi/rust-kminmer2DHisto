@@ -1,0 +1,18 @@
+[package]
+name = "rust-kminmer2Dhisto"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rust-seq2kminmers = { git = "https://github.com/rchikhi/rust-seq2kminmers" }
+dashmap = "3.11.10"
+seq_io= { git = "https://github.com/markschl/seq_io" }
+bio = "*"
+lzzzz = "0.7"
+indicatif = "0.16.2"
+structopt = "0.3.1"
+fxhash = "0.2.1"
+libc = "0.2.77"
+flate2 = "1.0.6"
