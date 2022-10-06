@@ -155,7 +155,9 @@ fn main() {
         l,
         density,
     };
-
+    let metadata = fs::metadata(&filename).expect("Error opening input reads file.");
+    let ref_metadata = fs::metadata(&ref_filename).expect("Error opening reference file.");
+    let file_size = metadata.len();
     let ref_threads = threads;
     let ref_queue_len = threads;
     let queue_len = 200; // https://doc.rust-lang.org/std/sync/mpsc/fn.sync_channel.html

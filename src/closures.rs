@@ -60,8 +60,6 @@ pub fn run_mers(filename: &PathBuf, ref_filename: &PathBuf, params: &Params, ref
         None::<()>
     };
 
-    //
-
     // Closures for mapping queries to references
 
     let query_process_read_aux_mer = |seq_str: &[u8], seq_id: &str| -> bool {
@@ -128,8 +126,8 @@ pub fn run_mers(filename: &PathBuf, ref_filename: &PathBuf, params: &Params, ref
     println!("nb read kminmers {}",read_mers_index.index.len());
     println!("nb ref kminmers {}",ref_mers_index.index.len());
 
-    let read_kminmers = Arc::try_unwrap(read_mers_index.index).unwrap().into_read_only();
-    for (node, entry) in read_kminmers.iter() {
+    for item in read_mers_index.index.iter() {
+        let (node, entry) = item.pair();
         let kminmer_abundance = entry.counter;
         let ref_e = ref_mers_index.get(node);
         let ref_abundance = if let Some(m) = ref_e {
@@ -139,7 +137,23 @@ pub fn run_mers(filename: &PathBuf, ref_filename: &PathBuf, params: &Params, ref
         let j = if ref_abundance > 9 { 9 } else { ref_abundance } as usize;
         hist[i][j] += 1;
     } 
-    
+
+    // now do the edge case where reference kminmers aren't found in the reads
+    for item in ref_mers_index.index.iter() {
+        let (node, entry) = item.pair();
+        let ref_abundance = entry.counter;
+        let read_e = read_mers_index.get(node);
+        let read_abundance = if let Some(m) = read_e {
+           m.counter
+        } else {0};
+        if read_abundance == 0
+        {
+            let i = 0;
+            let j = if ref_abundance > 9 { 9 } else { ref_abundance } as usize;
+            hist[i][j] += 1;
+        }
+    } 
+ 
     for i in 0..10000 {
         for j in 0..10 {
             write!(hist_file, "{}\t", hist[i][j]).expect("Error writing hist file.");
